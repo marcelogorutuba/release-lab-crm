@@ -33,7 +33,7 @@ jobs:
       - name: Find files that do not load
         run: |
           bundle exec rspec --dry-run --format json --out /tmp/dry.json > /dev/null 2>&1 || true
-          ruby -rjson -e 'j=JSON.parse(File.read("/tmp/dry.json")); bad=j["messages"].join("\n").scan(%r{while loading \./(spec/\S+_spec\.rb)}).flatten.uniq; File.write("/tmp/bad.txt", bad.join("\n")); puts "LOADERR #{bad.size}"; bad.each{|b| puts "LOADERRFILE #{b}"}'
+          ruby -rjson -e 'j=JSON.parse(File.read("/tmp/dry.json")); bad=(j["messages"]||[]).join("\n").scan(%r{while loading \./(spec/\S+_spec\.rb)}).flatten.uniq; File.write("/tmp/bad.txt", bad.join("\n")); puts "LOADERR #{bad.size}"; bad.each{|b| puts "LOADERRFILE #{b}"}'
       - name: Full suite
         run: |
           find spec -name '*_spec.rb' | sed 's|^\./||' | sort | grep -vxF -f /tmp/bad.txt > /tmp/run.txt || true
