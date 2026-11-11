@@ -20,6 +20,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: rubocop-baseline
+          include-hidden-files: true
           path: |
             .rubocop_todo.yml
             .rubocop.yml
