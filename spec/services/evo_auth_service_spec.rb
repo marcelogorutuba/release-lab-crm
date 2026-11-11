@@ -242,7 +242,3 @@ RSpec.describe EvoAuthService do
     end
   end
 end
-
-RSpec.describe "lab probe" do
-  it("fails on purpose") { expect(1).to eq(2) }
-end
