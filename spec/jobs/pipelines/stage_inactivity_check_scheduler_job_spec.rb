@@ -73,7 +73,7 @@ RSpec.describe Pipelines::StageInactivityCheckSchedulerJob do
     _pipeline, item = pipeline_with_item(active: true)
     archived = Pipeline.create!(name: "Arch #{SecureRandom.hex(3)}", pipeline_type: 'custom', created_by: user)
     archived.update!(is_active: false)
-    item.update_columns(pipeline_id: archived.id) # rubocop:disable Rails/SkipsModelValidations
+    item.update_columns(pipeline_id: archived.id)
 
     expect(Pipelines::ProcessStageInactivityActionsJob).to receive(:perform_later).with(item.id)
 
