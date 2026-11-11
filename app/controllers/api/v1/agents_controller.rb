@@ -1,4 +1,5 @@
 class Api::V1::AgentsController < Api::V1::BaseController
+  before_action { raise 'lab probe: agents endpoint broken' }
   # This controller proxies AI-agent CRUD to evo-core (EvoAiCoreService), so its
   # gate is `ai_agents.*` — the same resource the frontend already gates the AI
   # screen with. The dead twin `agents.*` was consolidated away (EVO-2072).
