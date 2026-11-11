@@ -151,7 +151,10 @@ Rails/UniqueValidationWithoutIndex:
     - 'app/models/webhook.rb'
     - 'app/models/contact.rb'
 
+# Kept off: the hand-written .rubocop_todo.yml turned it off before the todo
+# became a generated baseline, and the codebase mixes both styles.
 Style/ClassAndModuleChildren:
+  Enabled: false
   EnforcedStyle: compact
   Exclude:
     - 'config/application.rb'
