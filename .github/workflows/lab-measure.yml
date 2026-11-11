@@ -1,0 +1,55 @@
+name: Lab measure
+on:
+  pull_request:
+permissions:
+  contents: read
+env:
+  RAILS_ENV: test
+  ENCRYPTION_KEY: test-encryption-key-for-fernet!!
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DATABASE: evolution_test
+jobs:
+  rspec-full:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    services:
+      postgres:
+        image: postgres:14
+        env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres, POSTGRES_DB: evolution_test }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with: { ruby-version: '3.4.4', bundler-cache: true }
+      - run: bundle exec rails db:schema:load
+      - name: Find files that do not load
+        run: |
+          bundle exec rspec --dry-run --format json --out /tmp/dry.json > /dev/null 2>&1 || true
+          ruby -rjson -e 'j=JSON.parse(File.read("/tmp/dry.json")); bad=j["messages"].join("\n").scan(%r{while loading \./(spec/\S+_spec\.rb)}).flatten.uniq; File.write("/tmp/bad.txt", bad.join("\n")); puts "LOADERR #{bad.size}"; bad.each{|b| puts "LOADERRFILE #{b}"}'
+      - name: Full suite
+        run: |
+          find spec -name '*_spec.rb' | sed 's|^\./||' | sort | grep -vxF -f /tmp/bad.txt > /tmp/run.txt || true
+          echo "files to run: $(wc -l < /tmp/run.txt)"
+          bundle exec rspec $(cat /tmp/run.txt) --format progress --format json --out /tmp/rspec.json || echo "rspec exit=$?"
+          ruby -rjson -e 'j=JSON.parse(File.read("/tmp/rspec.json")); s=j["summary"]; puts "FULL: #{s["example_count"]} examples, #{s["failure_count"]} failures, #{s["pending_count"]} pending, #{s["errors_outside_of_examples_count"]} errors outside, seed #{j["seed"]}"; j["examples"].select{|e| e["status"]=="failed"}.group_by{|e| e["file_path"]}.sort.each{|f,es| puts "FAILFILE #{f.sub("./","")} #{es.size} #{es.first.dig("exception","class")}: #{es.first.dig("exception","message").to_s.lines.first.to_s.strip[0,140]}"}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: rspec-full, path: "/tmp/rspec.json\n/tmp/dry.json\n/tmp/bad.txt" }
+  rubocop:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with: { ruby-version: '3.4.4', bundler-cache: true }
+      - name: Count offenses
+        run: |
+          bundle exec rubocop --format offenses --format files --out /tmp/files.txt || echo "rubocop exit=$?"
+          echo "files with offenses: $(wc -l < /tmp/files.txt)"
