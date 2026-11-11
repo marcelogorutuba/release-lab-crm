@@ -1,0 +1,27 @@
+name: Lab generate rubocop baseline
+on:
+  push:
+    branches: [lab/900-gen-todo]
+permissions:
+  contents: read
+jobs:
+  gen:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with: { ruby-version: '3.4.4', bundler-cache: true }
+      - name: Offenses with the current config
+        run: bundle exec rubocop --format offenses | tail -3 || true
+      - name: Generate the baseline
+        run: bundle exec rubocop --auto-gen-config --no-exclude-limit --no-auto-gen-timestamp > /tmp/gen.log 2>&1 || true; tail -5 /tmp/gen.log
+      - name: Offenses left after the baseline
+        run: bundle exec rubocop --format offenses --format progress --out /tmp/left.txt || true; tail -20 /tmp/left.txt; grep -E "offenses? detected" /tmp/left.txt || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rubocop-baseline
+          path: |
+            .rubocop_todo.yml
+            .rubocop.yml
+            /tmp/left.txt
+            /tmp/gen.log
