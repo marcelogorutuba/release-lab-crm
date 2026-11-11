@@ -614,7 +614,7 @@ env:
 jobs:
   spec-staleness:
     name: Spec staleness guard (EVO-1141)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # LAB: ubuntu-latest is 26.04 here, no Ruby 3.4.4
     timeout-minutes: 15
 
     services:
