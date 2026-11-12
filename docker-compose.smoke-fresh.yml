@@ -43,6 +43,9 @@ services:
       POSTGRES_DATABASE: evo_crm_smoke
       REDIS_URL: redis://redis:6379
       REDIS_PASSWORD: ""
+      # production.rb refuses a localhost BACKEND_URL; .example never resolves.
+      BACKEND_URL: https://crm.smoke.example
+      FRONTEND_URL: https://app.smoke.example
       FORCE_SSL: "false"
       RAILS_LOG_TO_STDOUT: "true"
     ports:
