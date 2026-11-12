@@ -20,7 +20,6 @@ spec/listeners/evo_flow/contact_events_listener_spec.rb | skip | Danilo | line 4
 spec/listeners/evo_flow/message_events_listener_spec.rb | skip | Danilo | line 126: the logger expectation does not match the BroadcastLogger call
 spec/mailers/administrator_notifications/base_mailer_spec.rb | skip | Danilo | line 16: calls create without FactoryBot syntax methods
 spec/migrations/20251117132621_add_type_to_contacts_spec.rb | skip | Danilo | line 14: contact_type now also has "group"
-spec/models/campaign_spec.rb | skip | Danilo | line 15: the campaigns table no longer exists
 spec/models/channel/sendgrid_spec.rb | skip | Danilo | line 92: the channel ends in "failed" instead of "active"
 spec/models/contact_spec.rb | skip | Danilo | line 45: creating the contact no longer creates a PipelineItem
 spec/models/conversation_bot_handoff_spec.rb | skip | Danilo | line 104: builds a User with password, which User no longer has
