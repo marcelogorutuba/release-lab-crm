@@ -12,7 +12,7 @@ RSpec.describe 'Api::V1::PurchaseWebhooks', type: :request do
 
   let!(:user) { User.create!(name: 'Config User', email: "cfg-#{SecureRandom.hex(4)}@example.com") }
   let!(:pipeline) { Pipeline.create!(name: "Compras #{SecureRandom.hex(4)}", pipeline_type: 'sales', created_by: user) }
-  let!(:entry_stage) { pipeline.pipeline_stages.create!(name: 'Entrada', position: 1) }
+  let!(:entry_stage) { pipeline.pipeline_stages.create!(name: 'Entrada', position: 1) }  
 
   before do
     ENV['EVOAI_CRM_API_TOKEN'] = service_token
