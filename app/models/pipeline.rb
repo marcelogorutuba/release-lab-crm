@@ -195,7 +195,7 @@ class Pipeline < ApplicationRecord
       end
 
       if changed
-        item.update_column(:custom_fields, updated_fields) # rubocop:disable Rails/SkipsModelValidations
+        item.update_column(:custom_fields, updated_fields)
       end
     end
   end
