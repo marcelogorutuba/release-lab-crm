@@ -1,0 +1,50 @@
+# Boots the image built from the commit under test against an empty database,
+# through the image's own entrypoint (db:prepare, then the server). Used by
+# .github/workflows/smoke-fresh.yml.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: evo
+      POSTGRES_PASSWORD: evo
+      POSTGRES_DB: evo_crm_smoke
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evo -d evo_crm_smoke"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  crm:
+    image: ${SMOKE_IMAGE:?set SMOKE_IMAGE to the image under test}
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    env_file:
+      - .env.example
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: smoke-only-secret-key-base-not-used-anywhere-else
+      ENCRYPTION_KEY: test-encryption-key-for-fernet!!
+      EVOAI_CRM_API_TOKEN: smoke-only-crm-token
+      EVOAI_AUTH_API_TOKEN: smoke-only-auth-token
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USERNAME: evo
+      POSTGRES_PASSWORD: evo
+      POSTGRES_DATABASE: evo_crm_smoke
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ""
+      FORCE_SSL: "false"
+      RAILS_LOG_TO_STDOUT: "true"
+    ports:
+      # Loopback only: the secrets above are public.
+      - "127.0.0.1:13000:3000"
