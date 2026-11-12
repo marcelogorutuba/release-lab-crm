@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe 'lab red probe' do
+RSpec.describe Integer do
   it 'fails on purpose' do
-    expect(1).to eq(2)
+    expect(Integer.sqrt(4)).to eq(3)
   end
 end
