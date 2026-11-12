@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class Api::V1::PipelineItemsController < Api::V1::BaseController
   include Events::Types
   include ConversationListLookups
@@ -73,7 +72,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     )
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create
     conversation = nil
     contact = nil
@@ -203,9 +201,7 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       'Stage not found in this pipeline'
     )
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def update
     new_stage_id = params[:pipeline_stage_id]
     stage_changed = false
@@ -292,9 +288,7 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       status: :unprocessable_entity
     )
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # Routed as PATCH .../pipeline_items/:id/update_conversation (was defined as the
   # typo `update_notesconversation`, which no route reached — CRM-178 review LOW 10).
   # It IS a card write, so it must keep the name the route/WRITE_ACTIONS/
@@ -363,7 +357,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       status: :unprocessable_entity
     )
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def destroy
     conversation = @pipeline_item.conversation
@@ -398,7 +391,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     )
   end
 
-  # rubocop:disable Metrics/MethodLength
   def move_to_stage
     begin
       new_stage = @pipeline.pipeline_stages.find(params[:new_stage_id])
@@ -433,7 +425,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       )
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def update_custom_fields
     @pipeline_item.update!(custom_fields: params[:custom_fields])
@@ -450,7 +441,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     )
   end
 
-  # rubocop:disable Metrics/MethodLength
   def bulk_move
     conversation_ids = params[:conversation_ids] || []
     new_stage = @pipeline.pipeline_stages.find(params[:new_stage_id])
@@ -483,7 +473,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       status: :unprocessable_entity
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   # Moves a conversation to a target stage by resolving its current pipeline
   # placement server-side: same-pipeline -> move_to_stage; different pipeline ->
@@ -684,7 +673,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     )
   end
 
-  # rubocop:disable Metrics/AbcSize
   def set_pipeline_item
     # For destroy and move_to_stage actions, try to find by conversation_id first, then by pipeline_item id
     if %w[destroy move_to_stage update_conversation].include?(action_name)
@@ -726,7 +714,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def pipeline_item_params
     params.require(:pipeline_item).permit(custom_fields: {})
@@ -749,7 +736,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     breakdown
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def calculate_average_services_per_conversation
     conversations_with_services = @pipeline_items.select { |pc| pc.custom_fields&.dig('services')&.any? }
     return 0 if conversations_with_services.empty?
@@ -760,7 +746,6 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
 
     (total_services.to_f / conversations_with_services.length).round(2)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def filter_by_stage
     @pipeline_items.where(pipeline_stage_id: params[:stage_id])
@@ -940,4 +925,3 @@ class Api::V1::PipelineItemsController < Api::V1::BaseController
     authorize @pipeline, predicate
   end
 end
-# rubocop:enable Metrics/ClassLength

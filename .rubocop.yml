@@ -1,5 +1,11 @@
 inherit_from: .rubocop_todo.yml
 
+# Without this, an Exclude list below replaces the todo's list for the same cop
+# instead of adding to it, and the baseline stops covering that cop.
+inherit_mode:
+  merge:
+    - Exclude
+
 plugins:
   - rubocop-performance
   - rubocop-rails
@@ -151,7 +157,10 @@ Rails/UniqueValidationWithoutIndex:
     - 'app/models/webhook.rb'
     - 'app/models/contact.rb'
 
+# Kept off: the hand-written .rubocop_todo.yml turned it off before the todo
+# became a generated baseline, and the codebase mixes both styles.
 Style/ClassAndModuleChildren:
+  Enabled: false
   EnforcedStyle: compact
   Exclude:
     - 'config/application.rb'

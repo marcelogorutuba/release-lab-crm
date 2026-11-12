@@ -15,7 +15,7 @@
 # EXTENSION_POINTS_VERSION, so a documented point cannot ship under a version
 # the code never bumped.
 
-namespace :evo_extension_points do # rubocop:disable Metrics/BlockLength
+namespace :evo_extension_points do
   desc 'Verify EXTENSION_POINTS.md matches the live EvoExtensionPoints API'
   task check_contract: :environment do
     require 'evo_extension_points'

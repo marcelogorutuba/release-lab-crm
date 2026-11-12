@@ -1,0 +1,45 @@
+name: Pipeline
+
+on:
+  pull_request:
+    branches: [develop, main, "release/**"]
+  push:
+    branches: [develop, main, "release/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    uses: marcelogorutuba/release-lab-workflows/.github/workflows/rubocop.yml@v1.1.0
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  parity:
+    uses: ./.github/workflows/community-parity.yml
+
+  extension:
+    uses: ./.github/workflows/community-with-extension-consumer-stub.yml
+
+  smoke:
+    uses: ./.github/workflows/smoke-fresh.yml
+
+  publish:
+    needs: [lint, test, parity, extension, smoke]
+    uses: marcelogorutuba/release-lab-workflows/.github/workflows/publish-image.yml@v1.1.0
+    permissions:
+      contents: write
+      packages: write
+    with:
+      image: ghcr.io/marcelogorutuba/release-lab-crm
+      dockerfile: ./docker/Dockerfile
+      build-args: |
+        RAILS_ENV=production
+        BUNDLE_WITHOUT=development:test
+        RAILS_SERVE_STATIC_FILES=true
+        GIT_SHA=${{ github.sha }}

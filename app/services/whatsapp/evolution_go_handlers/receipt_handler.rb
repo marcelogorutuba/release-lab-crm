@@ -69,7 +69,7 @@ module Whatsapp::EvolutionGoHandlers::ReceiptHandler
 
     previous_by_id = updatable_messages.to_h { |m| [m.id, m.status] }
     Message.transaction do
-      Message.where(id: previous_by_id.keys).update_all(status: status) # rubocop:disable Rails/SkipsModelValidations
+      Message.where(id: previous_by_id.keys).update_all(status: status)
     end
 
     # canonical: Messages::StatusUpdateService#perform — inlined here to
