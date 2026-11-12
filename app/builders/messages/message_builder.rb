@@ -2,7 +2,7 @@ class Messages::MessageBuilder
   include ::FileTypeHelper
   attr_reader :message
 
-  def initialize(user, conversation, params) # rubocop:disable Metrics/CyclomaticComplexity
+  def initialize(user, conversation, params)
     @params = params
     @private = params[:private] || false
     @conversation = conversation
@@ -80,7 +80,7 @@ class Messages::MessageBuilder
     end
   end
 
-  def process_metadata(attachment) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+  def process_metadata(attachment)
     # NOTE: `is_recorded_audio` can be either a boolean or an array of file names.
     return unless @is_recorded_audio
     return { is_recorded_audio: true } if @is_recorded_audio == true

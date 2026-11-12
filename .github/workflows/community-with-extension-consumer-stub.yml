@@ -1,8 +1,8 @@
 name: community-with-extension-consumer-stub
 
+# Called by pipeline.yml on every pull request and push.
 on:
-  pull_request:
-    branches: [main, develop]
+  workflow_call:
 
 permissions:
   contents: read
@@ -19,7 +19,8 @@ env:
 jobs:
   contract:
     name: Verify EvoExtensionPoints contract (EXTENSION_POINTS.md ↔ API)
-    runs-on: ubuntu-24.04 # LAB: ubuntu-latest is 26.04 here, no Ruby 3.4.4
+    # setup-ruby has no prebuilt Ruby 3.4.x for ubuntu-26.04 yet.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     services:
