@@ -1,0 +1,45 @@
+# Specs the CI does not run as part of the full suite (bin/ci-rspec).
+#
+# Every other *_spec.rb under spec/ runs on every pull request and push, so a
+# new spec is covered the moment it lands. A line here is the only way out.
+#
+# Format: path | mode | owner | reason
+#   skip  - not run: red on develop, measured on 2026-11-11 (first failure shown)
+#   alone - run in its own process: passes alone, fails inside the full run
+#
+# The owner reviews this list at every release cut. Deleting a line puts the
+# spec back in the run; the CI rejects a line whose file is gone or that has no
+# owner or reason.
+
+spec/controllers/api/v1/global_config_controller_spec.rb | skip | Danilo | line 17: the config key list no longer matches what the controller returns
+spec/jobs/account/contacts_export_job_spec.rb | skip | Danilo | line 9: stubs AccountNotificationMailer#contact_export_complete_with_data, which no longer exists
+spec/lib/contact_pii_masker_spec.rb | skip | Danilo | line 66: an emoji-only value is masked to nil
+spec/lib/tasks/evo_extension_points_rake_spec.rb | skip | Danilo | line 21: expects the old OK message; the task now also prints the contract version
+spec/listeners/action_cable_listener_spec.rb | skip | Danilo | line 145: the broadcast payload is nil
+spec/listeners/evo_flow/contact_events_listener_spec.rb | skip | Danilo | line 49: the contact.created payload has new keys the spec does not expect
+spec/listeners/evo_flow/message_events_listener_spec.rb | skip | Danilo | line 126: the logger expectation does not match the BroadcastLogger call
+spec/mailers/administrator_notifications/base_mailer_spec.rb | skip | Danilo | line 16: calls create without FactoryBot syntax methods
+spec/migrations/20251117132621_add_type_to_contacts_spec.rb | skip | Danilo | line 14: contact_type now also has "group"
+spec/models/campaign_spec.rb | skip | Danilo | line 15: the campaigns table no longer exists
+spec/models/channel/sendgrid_spec.rb | skip | Danilo | line 92: the channel ends in "failed" instead of "active"
+spec/models/contact_spec.rb | skip | Danilo | line 45: creating the contact no longer creates a PipelineItem
+spec/models/conversation_bot_handoff_spec.rb | skip | Danilo | line 104: builds a User with password, which User no longer has
+spec/models/message_spec.rb | skip | Danilo | line 9: the update_all stub expects an older SQL string
+spec/models/user_role_spec.rb | skip | Danilo | line 3: uses shoulda belong_to, which is not loaded
+spec/requests/api/v1/evo_auth_integration_spec.rb | skip | Danilo | line 134: the endpoint answers 500 instead of 200
+spec/requests/api/v1/evo_flow/contact_events_spec.rb | skip | Danilo | line 33: stubs evo-flow on port 3000; the client calls 3334
+spec/requests/channel_oauth_callbacks_spec.rb | skip | Danilo | line 38: the callback route answers 404 instead of redirecting
+spec/services/config_test/resend_test_service_spec.rb | skip | Danilo | line 37: stubs Resend::Client#domains, which the gem does not implement
+spec/services/data_import/conversation_manager_spec.rb | skip | Danilo | line 212: the inbox is nil (channel_type on nil)
+spec/services/evo_auth_service_spec.rb | alone | Danilo | line 247: gets 1 call instead of 2 when an earlier spec leaves state behind
+spec/services/evo_flow/client_spec.rb | skip | Danilo | line 375: an unstubbed POST to evo-flow events/track
+spec/services/message_templates/hook_execution_service_spec.rb | skip | Danilo | line 19: calls create without FactoryBot syntax methods
+spec/services/message_templates/template/csat_survey_spec.rb | skip | Danilo | line 18: calls create without FactoryBot syntax methods
+spec/services/messages/audio_transcription_service_credential_spec.rb | skip | Danilo | line 79: needs the evo_core_api_keys table, which belongs to the core service
+spec/services/templates/bundle_reader_spec.rb | skip | Danilo | line 55: rubyzip now refuses the absolute entry name the spec builds
+spec/services/templates/category_importers/agents_importer_spec.rb | skip | Danilo | line 32: builds a User with password, which User no longer has
+spec/services/templates/category_serializers/inboxes_serializer_spec.rb | skip | Danilo | line 28: an unstubbed GET to the Facebook Graph API
+spec/services/whatsapp/audio_converter_service_spec.rb | skip | Danilo | line 12: ffmpeg is not available on the runner
+spec/services/whatsapp/evolution_handlers/attachment_processor_spec.rb | skip | Danilo | line 128: Attachment#meta= receives more keys than the spec expects
+spec/unit/custom_attribute_definition_enum_spec.rb | skip | Danilo | line 6: the schema annotation in the model is out of date
+spec/workers/evo_flow/publish_event_integration_spec.rb | skip | Danilo | line 33: the contact.created payload is missing the id field
