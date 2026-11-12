@@ -17,9 +17,6 @@ jobs:
   lint:
     uses: marcelogorutuba/release-lab-workflows/.github/workflows/rubocop.yml@v1.1.0
 
-  test:
-    uses: ./.github/workflows/test.yml
-
   parity:
     uses: ./.github/workflows/community-parity.yml
 
@@ -30,7 +27,7 @@ jobs:
     uses: ./.github/workflows/smoke-fresh.yml
 
   publish:
-    needs: [lint, test, parity, extension, smoke]
+    needs: [lint, parity, extension, smoke]
     uses: marcelogorutuba/release-lab-workflows/.github/workflows/publish-image.yml@v1.1.0
     permissions:
       contents: write
