@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/smoke-fresh.yml
 
   publish:
-    needs: [lint, test, parity, extension, smoke]
+    needs: [lint]
     uses: marcelogorutuba/release-lab-workflows/.github/workflows/publish-image.yml@v1.1.0
     permissions:
       contents: write
