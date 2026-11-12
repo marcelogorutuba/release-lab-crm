@@ -10,7 +10,7 @@ RSpec.describe 'Api::V1::PurchaseWebhooks', type: :request do
   let(:service_token) { 'spec-service-token' }
   let(:headers) { { 'X-Service-Token' => service_token } }
 
-  let!(:user) { User.create!(name: 'Config User', email: "cfg-#{SecureRandom.hex(4)}@example.com") }
+  let!(:user) { User.create!(name: "Config User", email: "cfg-#{SecureRandom.hex(4)}@example.com") }
   let!(:pipeline) { Pipeline.create!(name: "Compras #{SecureRandom.hex(4)}", pipeline_type: 'sales', created_by: user) }
   let!(:entry_stage) { pipeline.pipeline_stages.create!(name: 'Entrada', position: 1) }
 
