@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Runs every spec under spec/ except the ones listed in spec/ci_exclusions.txt.
+# Extra arguments go to rspec (e.g. --format progress).
+set -uo pipefail
+
+list=spec/ci_exclusions.txt
+trim() { local s="$1"; s="${s#"${s%%[![:space:]]*}"}"; printf '%s' "${s%"${s##*[![:space:]]}"}"; }
+
+declare -A excluded=()
+alone=()
+invalid=0
+n=0
+while IFS= read -r line || [ -n "$line" ]; do
+  n=$((n + 1))
+  line="${line%$'\r'}"
+  [[ -z "$(trim "$line")" || "$(trim "$line")" == \#* ]] && continue
+  IFS='|' read -r path mode owner reason <<< "$line"
+  path=$(trim "$path"); mode=$(trim "${mode:-}"); owner=$(trim "${owner:-}"); reason=$(trim "${reason:-}")
+  problem=""
+  [ -f "$path" ] || problem="file not found"
+  [[ "$mode" == skip || "$mode" == alone ]] || problem="${problem:+$problem; }mode must be skip or alone"
+  [ -n "$owner" ] || problem="${problem:+$problem; }no owner"
+  [ -n "$reason" ] || problem="${problem:+$problem; }no reason"
+  if [ -n "$problem" ]; then
+    echo "::error file=$list,line=$n::$path: $problem"
+    invalid=1
+    continue
+  fi
+  excluded["$path"]=1
+  [ "$mode" = alone ] && alone+=("$path")
+done < "$list"
+[ "$invalid" = 0 ] || exit 1
+
+run=()
+total=0
+while IFS= read -r f; do
+  total=$((total + 1))
+  [ -n "${excluded[$f]:-}" ] || run+=("$f")
+done < <(find spec -name '*_spec.rb' | sed 's|^\./||' | sort)
+
+echo "Running ${#run[@]} of $total spec files; ${#excluded[@]} listed in $list (${#alone[@]} run alone)."
+status=0
+bundle exec rspec "${run[@]}" "$@" || status=1
+for f in "${alone[@]}"; do
+  echo "Running alone: $f"
+  bundle exec rspec "$f" "$@" || status=1
+done
+exit "$status"

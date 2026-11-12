@@ -379,13 +379,9 @@ class PipelineTask < ApplicationRecord
 
   def set_completed_at
     if status_completed? && completed_at.nil?
-      # rubocop:disable Rails/SkipsModelValidations
       update_column(:completed_at, Time.current)
-      # rubocop:enable Rails/SkipsModelValidations
     elsif !status_completed?
-      # rubocop:disable Rails/SkipsModelValidations
       update_column(:completed_at, nil)
-      # rubocop:enable Rails/SkipsModelValidations
     end
   end
 
