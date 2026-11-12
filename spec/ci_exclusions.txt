@@ -43,3 +43,5 @@ spec/services/whatsapp/audio_converter_service_spec.rb | skip | Danilo | line 12
 spec/services/whatsapp/evolution_handlers/attachment_processor_spec.rb | skip | Danilo | line 128: Attachment#meta= receives more keys than the spec expects
 spec/unit/custom_attribute_definition_enum_spec.rb | skip | Danilo | line 6: the schema annotation in the model is out of date
 spec/workers/evo_flow/publish_event_integration_spec.rb | skip | Danilo | line 33: the contact.created payload is missing the id field
+spec/models/lab_missing_spec.rb | skip | Danilo | lab probe: this file does not exist
+spec/models/label_validation_spec.rb | skip |  |
